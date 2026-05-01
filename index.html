@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquilla Invicta — Professional Coder AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --accent: #22d3ee;
+            --accent-glow: rgba(34, 211, 238, 0.3);
+            --bg: #0a0a0f;
+            --bg-elevated: #12121a;
+            --surface: #1a1a25;
+            --surface-hover: #222230;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --error: #f87171;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .bg-mesh {
+            position: fixed; inset: 0; z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(34, 211, 238, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 70%);
+        }
+
+        .bg-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+        }
+
+        .particles {
+            position: fixed; inset: 0; z-index: -1;
+            overflow: hidden; pointer-events: none;
+        }
+
+        .particle {
+            position: absolute; width: 2px; height: 2px;
+            background: var(--primary); border-radius: 50%;
+            opacity: 0.4; animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.4; } 90% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) translateX(100px); opacity: 0; }
+        }
+
+        nav {
+            position: fixed; top: 0; width: 100%;
+            padding: 1.25rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex; align-items: center; gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em;
+        }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+        .nav-links a {
+            color: var(--text-muted); text-decoration: none;
+            font-size: 0.9rem; font-weight: 500; transition: color 0.3s; position: relative;
+        }
+
+        .nav-links a:hover { color: var(--text); }
+
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after { width: 100%; }
+
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 8rem 2rem 4rem; position: relative;
+        }
+
+        .hero-content { max-width: 900px; text-align: center; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 100px; font-size: 0.85rem;
+            color: var(--primary); margin-bottom: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge::before {
+            content: ''; width: 8px; height: 8px;
+            background: var(--success); border-radius: 50%;
+            box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800;
+            line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem; color: var(--text-muted);
+            max-width: 600px; margin: 0 auto 3rem; line-height: 1.7;
+        }
+
+        .cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        .btn {
+            padding: 0.875rem 2rem; border-radius: 12px; font-weight: 600;
+            font-size: 0.95rem; cursor: pointer; transition: all 0.3s;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white; box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); }
+
+        .btn-secondary {
+            background: var(--surface); color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.1); }
+
+        .btn-glow {
+            position: relative; overflow: hidden;
+        }
+
+        .btn-glow::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--primary));
+            border-radius: 14px; z-index: -1; opacity: 0;
+            transition: opacity 0.3s; filter: blur(8px);
+        }
+
+        .btn-glow:hover::before { opacity: 0.6; }
+
+        .code-window {
+            max-width: 800px; margin: 4rem auto 0;
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transform: perspective(1000px) rotateX(2deg);
+            transition: transform 0.3s;
+        }
+
+        .code-window:hover { transform: perspective(1000px) rotateX(0deg); }
+
+        .code-header {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 1rem 1.25rem; background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .code-title {
+            margin-left: 0.75rem; font-size: 0.8rem;
+            color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-body {
+            padding: 1.5rem; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem; line-height: 1.8; overflow-x: auto;
+        }
+
+        .code-line { display: flex; gap: 1rem; }
+
+        .line-num {
+            color: var(--text-muted); opacity: 0.4;
+            min-width: 2rem; text-align: right; user-select: none;
+        }
+
+        .code-content { color: var(--text); }
+        .keyword { color: #c084fc; }
+        .function { color: #60a5fa; }
+        .string { color: #34d399; }
+        .comment { color: #64748b; font-style: italic; }
+        .type { color: #fbbf24; }
+
+        .chat-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            display: none; flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .chat-overlay.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .chat-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+            background: var(--bg-elevated);
+        }
+
+        .chat-header-left { display: flex; align-items: center; gap: 0.75rem; }
+
+        .chat-status {
+            width: 8px; height: 8px; background: var(--success);
+            border-radius: 50%; box-shadow: 0 0 10px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .chat-title {
+            font-weight: 600; font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .chat-subtitle { font-size: 0.8rem; color: var(--text-muted); }
+
+        .chat-close {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text); cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 1.2rem; transition: all 0.3s;
+        }
+
+        .chat-close:hover { background: var(--surface-hover); border-color: var(--error); color: var(--error); }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 1.5rem;
+            display: flex; flex-direction: column; gap: 1rem;
+            max-width: 900px; width: 100%; margin: 0 auto;
+        }
+
+        .message {
+            max-width: 85%; padding: 1rem 1.25rem;
+            border-radius: 16px; font-size: 0.95rem;
+            line-height: 1.6; animation: slideUp 0.3s ease;
+            word-wrap: break-word;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white; border-bottom-right-radius: 4px;
+        }
+
+        .message-ai {
+            align-self: flex-start;
+            background: var(--surface); border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-ai .msg-label {
+            font-size: 0.75rem; color: var(--accent);
+            font-weight: 600; margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+
+        .message-ai .msg-content { color: var(--text); white-space: pre-wrap; }
+
+        .message-ai .msg-sources {
+            margin-top: 0.75rem; padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .msg-sources-label {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin-bottom: 0.4rem; font-weight: 500;
+        }
+
+        .source-link {
+            display: block; font-size: 0.8rem; color: var(--primary);
+            text-decoration: none; margin-bottom: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .source-link:hover { color: var(--accent); text-decoration: underline; }
+
+        .typing-indicator {
+            display: flex; gap: 0.3rem; padding: 0.5rem 0;
+        }
+
+        .typing-indicator span {
+            width: 8px; height: 8px; background: var(--primary);
+            border-radius: 50%; animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .chat-input-area {
+            padding: 1rem 1.5rem 1.5rem;
+            border-top: 1px solid var(--border);
+            background: var(--bg-elevated);
+        }
+
+        .chat-input-wrapper {
+            max-width: 900px; margin: 0 auto;
+            display: flex; gap: 0.75rem; align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1; background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 0.875rem 1.25rem; color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            resize: none; outline: none; transition: all 0.3s;
+            min-height: 52px; max-height: 150px;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .chat-input::placeholder { color: var(--text-muted); }
+
+        .chat-send {
+            width: 52px; height: 52px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none; color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; transition: all 0.3s; flex-shrink: 0;
+        }
+
+        .chat-send:hover { transform: scale(1.05); box-shadow: 0 4px 20px var(--primary-glow); }
+
+        .chat-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .error-banner {
+            background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3);
+            color: var(--error); padding: 0.75rem 1rem; border-radius: 10px;
+            font-size: 0.85rem; margin-bottom: 0.75rem; display: none;
+        }
+
+        .error-banner.show { display: block; animation: slideUp 0.3s ease; }
+
+        .features { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
+
+        .section-header { text-align: center; margin-bottom: 4rem; }
+
+        .section-header h2 {
+            font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem; transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 1px; background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0; transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-icon {
+            width: 48px; height: 48px; background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 1.25rem;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
+
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        .stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem; max-width: 900px; margin: 4rem auto; padding: 0 2rem;
+        }
+
+        .stat-item {
+            text-align: center; padding: 2rem;
+            background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem; }
+
+        footer {
+            text-align: center; padding: 4rem 2rem;
+            border-top: 1px solid var(--border); margin-top: 4rem;
+            color: var(--text-muted); font-size: 0.9rem;
+        }
+
+        .footer-logo {
+            font-family: 'JetBrains Mono', monospace; font-weight: 700;
+            font-size: 1.2rem; color: var(--text); margin-bottom: 1rem;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--surface-hover); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 6rem 1.5rem 3rem; }
+            .code-window { transform: none; }
+            .message { max-width: 95%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+    <div class="particles" id="particles"></div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <span>Aquilla Invicta</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#capabilities">Capabilities</a></li>
+            <li><a href="#stats">Metrics</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge">v2.0.1 — System Online</div>
+            <h1>
+                Meet <span>Aquilla Invicta</span><br>
+                Professional Coder AI
+            </h1>
+            <p class="hero-subtitle">
+                An autonomous coding intelligence engineered for precision, speed, and architectural excellence. From system design to deployment.
+            </p>
+            <div class="cta-group">
+                <button class="btn btn-primary btn-glow" onclick="openChat()">
+                    <span>🚀</span> Launch Aquilla AI
+                </button>
+                <a href="#capabilities" class="btn btn-secondary">View Capabilities</a>
+            </div>
+
+            <div class="code-window">
+                <div class="code-header">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                    <span class="code-title">aquilla-core.ts</span>
+                </div>
+                <div class="code-body">
+                    <div class="code-line"><span class="line-num">1</span><span class="code-content"><span class="keyword">class</span> <span class="type">AquillaInvicta</span> <span class="keyword">extends</span> <span class="type">AutonomousCoder</span> {</span></div>
+                    <div class="code-line"><span class="line-num">2</span><span class="code-content">  <span class="keyword">private</span> <span class="function">architecture</span> = <span class="string">"neural-symbolic"</span>;</span></div>
+                    <div class="code-line"><span class="line-num">3</span><span class="code-content">  <span class="keyword">private</span> <span class="function">contextWindow</span> = <span class="string">"2M tokens"</span>;</span></div>
+                    <div class="code-line"><span class="line-num">4</span><span class="code-content"></span></div>
+                    <div class="code-line"><span class="line-num">5</span><span class="code-content">  <span class="keyword">async</span> <span class="function">generate</span>(spec: <span class="type">Requirement</span>): <span class="type">Promise</span>&lt;<span class="type">Solution</span>&gt; {</span></div>
+                    <div class="code-line"><span class="line-num">6</span><span class="code-content">    <span class="keyword">const</span> design = <span class="keyword">await</span> <span class="keyword">this</span>.<span class="function">architect</span>(spec); <span class="comment">// System design</span></span></div>
+                    <div class="code-line"><span class="line-num">7</span><span class="code-content">    <span class="keyword">const</span> code = <span class="keyword">await</span> <span class="keyword">this</span>.<span class="function">synthesize</span>(design); <span class="comment">// Code generation</span></span></div>
+                    <div class="code-line"><span class="line-num">8</span><span class="code-content">    <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">optimize</span>(code); <span class="comment">// Performance tuning</span></span></div>
+                    <div class="code-line"><span class="line-num">9</span><span class="code-content">  }</span></div>
+                    <div class="code-line"><span class="line-num">10</span><span class="code-content">}</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="capabilities">
+        <div class="section-header">
+            <h2>Core Capabilities</h2>
+            <p>Engineered to handle the full spectrum of software engineering tasks with human-level reasoning.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>System Architecture</h3>
+                <p>Designs scalable microservices, event-driven architectures, and distributed systems from first principles.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Code Synthesis</h3>
+                <p>Generates production-ready code across 40+ languages with type safety, tests, and documentation included.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Debug & Refactor</h3>
+                <p>Identifies root causes in complex codebases and performs surgical refactors without breaking changes.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Security Audit</h3>
+                <p>Detects vulnerabilities, injection risks, and logic flaws with OWASP-aligned remediation strategies.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Performance Tuning</h3>
+                <p>Optimizes algorithms, database queries, and memory usage with benchmarking and profiling insights.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>DevOps Pipeline</h3>
+                <p>Writes CI/CD configurations, Dockerfiles, Terraform modules, and Kubernetes manifests.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats" id="stats">
+        <div class="stat-item">
+            <div class="stat-value">40+</div>
+            <div class="stat-label">Languages Supported</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">99.7%</div>
+            <div class="stat-label">Test Pass Rate</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">&lt;50ms</div>
+            <div class="stat-label">Avg Response Time</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">∞</div>
+            <div class="stat-label">Context Retention</div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo"><span style="font-size: 1.5rem;">⚡</span> Aquilla Invicta</div>
+        <p>Professional Coder AI — Built for engineers, by engineers.</p>
+        <p style="margin-top: 0.5rem; opacity: 0.6;">© 2026 Aquilla Systems. All rights reserved.</p>
+    </footer>
+
+    <div class="chat-overlay" id="chatOverlay">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <div class="chat-status"></div>
+                <div>
+                    <div class="chat-title">Aquilla Invicta</div>
+                    <div class="chat-subtitle">TurboSeek Engine • Online</div>
+                </div>
+            </div>
+            <button class="chat-close" onclick="closeChat()" title="Close">✕</button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message message-ai">
+                <div class="msg-label">⚡ Aquilla Invicta</div>
+                <div class="msg-content">Hello! I'm Aquilla Invicta, your professional coding AI. I can help you with system design, code generation, debugging, and more. What would you like to build today?</div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+                <textarea class="chat-input" id="chatInput" rows="1" placeholder="Ask anything about coding, architecture, or deployment..." onkeydown="handleKeyDown(event)"></textarea>
+                <button class="chat-send" id="sendBtn" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+            <div class="error-banner" id="errorBanner"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_ENDPOINT = '/api';
+
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        const chatOverlay = document.getElementById('chatOverlay');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const errorBanner = document.getElementById('errorBanner');
+
+        function openChat() {
+            chatOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => chatInput.focus(), 300);
+        }
+
+        function closeChat() {
+            chatOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 150) + 'px';
+        }
+
+        function showError(msg) {
+            errorBanner.textContent = msg;
+            errorBanner.classList.add('show');
+            setTimeout(() => errorBanner.classList.remove('show'), 5000);
+        }
+
+        function addMessage(text, isUser = false, sources = [], similarQuestions = []) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'message-user' : 'message-ai'}`;
+
+            if (isUser) {
+                msgDiv.textContent = text;
+            } else {
+                let html = `<div class="msg-label">⚡ Aquilla Invicta</div>`;
+                html += `<div class="msg-content">${escapeHtml(text)}</div>`;
+
+                if (sources && sources.length > 0) {
+                    html += `<div class="msg-sources">`;
+                    html += `<div class="msg-sources-label">📚 Sources:</div>`;
+                    sources.forEach(url => {
+                        try {
+                            const domain = new URL(url).hostname.replace('www.', '');
+                            html += `<a href="${url}" target="_blank" class="source-link">🔗 ${domain}</a>`;
+                        } catch(e) {
+                            html += `<a href="${url}" target="_blank" class="source-link">🔗 ${url}</a>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+
+                if (similarQuestions && similarQuestions.length > 0) {
+                    html += `<div class="msg-sources" style="margin-top:0.5rem;">`;
+                    html += `<div class="msg-sources-label">💡 Related:</div>`;
+                    similarQuestions.forEach(q => {
+                        html += `<a href="#" onclick="askQuestion('${escapeHtml(q).replace(/'/g, "\'")}');return false;" class="source-link" style="color:var(--accent);">→ ${escapeHtml(q)}</a>`;
+                    });
+                    html += `</div>`;
+                }
+
+                msgDiv.innerHTML = html;
+            }
+
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return msgDiv;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function askQuestion(q) {
+            chatInput.value = q;
+            sendMessage();
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message message-ai';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="msg-label">⚡ Aquilla Invicta</div>
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            sendBtn.disabled = true;
+            errorBanner.classList.remove('show');
+
+            showTyping();
+
+            try {
+                const response = await fetch(`${API_ENDPOINT}?question=${encodeURIComponent(text)}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                hideTyping();
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || `HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                addMessage(data.answer || 'No answer received.', false, data.sources || [], data.similarQuestions || []);
+
+            } catch (error) {
+                hideTyping();
+                console.error('API Error:', error);
+                showError(`Failed: ${error.message}. Ensure API is deployed.`);
+                addMessage(`I'm currently in demo mode since the API endpoint isn't reachable yet. Once deployed at \`${API_ENDPOINT}\`, I'll answer using TurboSeek engine.\n\nYour question: "${text}"`, false);
+            } finally {
+                sendBtn.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.feature-card').forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = `all 0.6s ease ${i * 0.1}s`;
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
