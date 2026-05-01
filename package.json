@@ -1,0 +1,9 @@
+{
+  "name": "aquilla-invicta",
+  "version": "1.0.0",
+  "description": "Aquilla Invicta - Professional Coder AI with TurboSeek Engine",
+  "main": "api/index.js",
+  "dependencies": {
+    "axios": "^1.7.2"
+  }
+}
